@@ -44,3 +44,6 @@ package-lock.json
 
 # text editor
 .vscode
+
+# generated TS schema files for convex
+convex/_generated
