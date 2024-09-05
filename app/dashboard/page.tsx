@@ -7,6 +7,9 @@ import { RecentJobPostings } from "../../components/recent-jobs";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
 import { ScrollArea } from "../../components/ui/scrollarea";
 import { Overview } from "../../components/overview";
+import { fetchQuery } from "convex/nextjs";
+import { api } from "../../convex/_generated/api";
+import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
 
 export default async function Dashboard({ searchParams }: { searchParams: { newUser: string /* newUser=true */ } }) {
   /* TODO: rework new user page */
@@ -34,7 +37,7 @@ export default async function Dashboard({ searchParams }: { searchParams: { newU
   let totalInterviews = 0;
   let totalOpenPositions = 0;
   let totalJobsCreatedThisMonth = 0;
-  let jobs: Array<any> | null = [];
+  let jobs: Array<any> = await fetchQuery(api.jobs.jobs, {}, { token: convexAuthNextjsToken() });
   const successRate = totalApplicants === 0 ? 0 : Math.floor((totalInterviews / totalApplicants) * 100);
 
   /* TODO: fetch data for dashboard analytics - charts, badges, ... */
