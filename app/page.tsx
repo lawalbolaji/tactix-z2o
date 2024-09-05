@@ -9,7 +9,7 @@ export default function HomePage() {
         <Card className="mx-auto max-w-sm">
           <CardHeader>
             <CardTitle className="text-xl">Welcome back</CardTitle>
-            <CardDescription>Enter your credentials below to sign in</CardDescription>
+            <CardDescription>Enter your credentials below to get started</CardDescription>
           </CardHeader>
           <CardContent>
             <SignIn />

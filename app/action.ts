@@ -7,7 +7,6 @@ import { revalidatePath } from "next/cache";
 export async function signIn(prevState: any, formData: FormData) {
   const authSchema = z.object({
     email: z.string().email(),
-    password: z.string(),
   });
 
   const {
@@ -16,7 +15,6 @@ export async function signIn(prevState: any, formData: FormData) {
     data: authPayload,
   } = authSchema.safeParse({
     email: formData.get("email"),
-    password: formData.get("password"),
   });
 
   if (!success) {
@@ -44,6 +42,6 @@ export async function signIn(prevState: any, formData: FormData) {
     return { error: { message: authError.message, type: authError.name } };
   }
 
-    revalidatePath("/dashboard", "layout");
-    redirect("/dashboard");
+  revalidatePath("/dashboard", "layout");
+  redirect("/dashboard");
 }

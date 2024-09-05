@@ -1,8 +1,6 @@
 "use client";
 
 import { useFormState, useFormStatus } from "react-dom";
-import Link from "next/link";
-
 import { Linkedin, Github } from "lucide-react";
 
 import { signIn } from "@/app/action";
@@ -36,21 +34,6 @@ export function SignIn() {
             <></>
           )}
         </div>
-        <div className="grid gap-2">
-          <Label htmlFor="password">Password</Label>
-          <Input id="password" name="password" type="password" placeholder="••••••••" required aria-required />
-          {state.error.type === "VALIDATION_ERROR" && state.error.fields?.password?.[0] ? (
-            <div className="text-xs text-red-500">{state.error.fields.password[0]}</div>
-          ) : (
-            <></>
-          )}
-        </div>
-
-        {state.error.type !== "VALIDATION_ERROR" ? (
-          <div className="text-xs text-red-500 mt-[-10px]">{state.error.message}</div>
-        ) : (
-          <></>
-        )}
 
         <SubmitButton />
 
@@ -67,12 +50,6 @@ export function SignIn() {
           <SignInWithLinkedin />
           <SignInWithGitHub />
         </div>
-      </div>
-      <div className="mt-4 text-center text-sm">
-        Don&apos;t have an account?{" "}
-        <Link href="/register" className="underline" prefetch={false}>
-          Register
-        </Link>
       </div>
     </form>
   );
