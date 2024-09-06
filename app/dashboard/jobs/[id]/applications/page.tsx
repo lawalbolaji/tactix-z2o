@@ -11,14 +11,14 @@ import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
 export default async function TopApplications({ params }: { params: { id: string } }) {
   /* maximum of 3 applicants here, use view all button to see all applicants */
   const {
-    applicants: topApplicants,
+    applications: topApplications,
     job: { title: jobTitle },
-  } = await fetchQuery(api.applicants.topApplicants, { jobId: params.id }, { token: convexAuthNextjsToken() });
+  } = await fetchQuery(api.applications.topApplications, { jobId: params.id }, { token: convexAuthNextjsToken() });
 
   return (
     <main className="flex-1 px-4 md:px-6 py-12">
       <div className="w-full max-w-4xl mx-auto py-12 md:py-16 lg:py-20">
-        {topApplicants.length === 0 ? (
+        {topApplications.length === 0 ? (
           <div className="bg-gray-100 rounded-lg p-6 md:p-8 flex flex-col items-center justify-center text-center">
             <FileSearch className="w-12 h-12 text-gray-500 mb-4" />
             <h2 className="text-2xl font-bold mb-2">No Applicants Yet</h2>
@@ -36,7 +36,7 @@ export default async function TopApplications({ params }: { params: { id: string
 
             <div className="grid gap-6 md:gap-8 lg:gap-10">
               <div className="flex flex-row items-center justify-center gap-6 md:gap-8 lg:gap-10">
-                {topApplicants.map((applicant) => (
+                {topApplications.map((applicant) => (
                   <Fragment key={applicant._id}>
                     <div className="bg-gray-100 rounded-lg p-4 md:p-6 flex flex-col items-start gap-4">
                       <div className="flex items-center gap-4">

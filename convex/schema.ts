@@ -31,7 +31,7 @@ export default defineSchema({
     email_subject: v.string(),
     email_message: v.string(),
   }).index("by_authorId", ["authorId"]),
-  applicants: defineTable({
+  applications: defineTable({
     jobId: v.id("jobs"),
     name: v.string(),
     email: v.string(),
