@@ -3,13 +3,13 @@ import { NavItem } from "@/types";
 export const navItems: NavItem[] = [
   {
     title: "Dashboard",
-    href: "/v2/dashboard",
+    href: "/dashboard",
     icon: "dashboard",
     label: "Dashboard",
   },
   {
     title: "Jobs",
-    href: "/v2/dashboard/jobs",
+    href: "/dashboard/jobs",
     icon: "kanban",
     label: "Jobs",
   },

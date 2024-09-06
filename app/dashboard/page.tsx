@@ -37,7 +37,8 @@ export default async function Dashboard({ searchParams }: { searchParams: { newU
   let totalInterviews = 0;
   let totalOpenPositions = 0;
   let totalJobsCreatedThisMonth = 0;
-  let jobs: Array<any> = await fetchQuery(api.jobs.jobs, {}, { token: convexAuthNextjsToken() });
+  const token = convexAuthNextjsToken();
+  let jobs: Array<any> = await fetchQuery(api.jobs.mostRecentJobs, {}, { token });
   const successRate = totalApplicants === 0 ? 0 : Math.floor((totalInterviews / totalApplicants) * 100);
 
   /* TODO: fetch data for dashboard analytics - charts, badges, ... */

@@ -25,7 +25,7 @@ export const getLoggedInUserMetadata = query({
 
     const metadata = await ctx.db
       .query("metadata")
-      .withIndex("userId", (query) => query.eq("userId", userId))
+      .withIndex("by_userId", (query) => query.eq("userId", userId))
       .unique();
 
     return metadata;

@@ -14,7 +14,7 @@ export default defineSchema({
     userId: v.id("users"),
     company: v.string(),
     company_url: v.string(),
-  }).index("userId", ["userId"]),
+  }).index("by_userId", ["userId"]),
   jobs: defineTable({
     authorId: v.id("users"),
     title: v.string(),
@@ -30,7 +30,7 @@ export default defineSchema({
     experience: v.string(),
     email_subject: v.string(),
     email_message: v.string(),
-  }).index("authorId", ["authorId"]),
+  }).index("by_authorId", ["authorId"]),
   applicants: defineTable({
     jobId: v.id("jobs"),
     name: v.string(),
