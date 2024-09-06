@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { query } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { Id } from "./_generated/dataModel";
 import { paginationOptsValidator } from "convex/server";
@@ -24,6 +24,21 @@ export const topApplications = query({
   },
 });
 
+export const application = query({
+  args: { jobId: v.string(), applicationId: v.string() },
+  handler: async (ctx, args) => {
+    const authorId = await getAuthUserId(ctx);
+    if (!authorId) throw new Error("user not signed in");
+
+    // get job details
+    const job = await ctx.db.get(args.jobId as Id<"jobs">);
+    if (!job) throw new Error("job not found");
+
+    const application = await ctx.db.get(args.applicationId as Id<"applications">);
+    return { application, job: { title: job.title } };
+  },
+});
+
 export const allApplicationsWithPagination = query({
   args: { paginationOps: paginationOptsValidator, jobId: v.string() },
   handler: async (ctx, args) => {
@@ -36,5 +51,15 @@ export const allApplicationsWithPagination = query({
       .withIndex("by_jobId_score", (query) => query.eq("jobId", args.jobId as Id<"jobs">)) /*  */
       .order("desc") /* By default Convex always returns documents ordered by _creationTime */
       .paginate(args.paginationOps);
+  },
+});
+
+export const updateApplicationStatus = mutation({
+  args: { applicationId: v.string(), status: v.string() },
+  handler: async (ctx, args) => {
+    const authorId = await getAuthUserId(ctx);
+    if (!authorId) throw new Error("user not signed in");
+
+    await ctx.db.patch(args.applicationId as Id<"applications">, { status: args.status });
   },
 });
