@@ -46,7 +46,11 @@ export async function createNewJobPosting(formData: FormData) {
 
   const token = convexAuthNextjsToken();
   /* this guy will throw if there's an error */
-  await fetchMutation(api.jobs.createNewJob, { ...data, is_published: true, salary: +data.salary }, { token });
+  await fetchMutation(
+    api.jobs.createNewJob,
+    { ...data, is_published: true, salary: +data.salary, expires_at: new Date(data.expires_at).getTime() },
+    { token },
+  );
   console.log("successfully saved job to DB");
 
   revalidatePath("/dashboard", "layout");

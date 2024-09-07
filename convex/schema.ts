@@ -24,7 +24,7 @@ export default defineSchema({
     is_published: v.optional(v.boolean()),
     is_deleted: v.optional(v.boolean()),
     is_open: v.optional(v.boolean()),
-    expires_at: v.string() /* should be an ISO timestamp */,
+    expires_at: v.number() /* should be an ISO timestamp */,
     qualifications: v.string(),
     employment_type: v.string(),
     experience: v.string(),

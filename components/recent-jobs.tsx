@@ -7,7 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel 
 import Link from "next/link";
 import { CopyJobUrlStatic } from "./copyjoburlstatic";
 
-export function RecentJobPostings(props: { jobs: Array<any> | null }) {
+export function RecentJobPostings(props: { jobs: Array<any> }) {
     return (
         <Table>
             <TableHeader>
@@ -19,9 +19,9 @@ export function RecentJobPostings(props: { jobs: Array<any> | null }) {
             </TableHeader>
             <TableBody>
                 {props.jobs?.map((job) => (
-                    <TableRow key={job.id}>
+                    <TableRow key={job._id}>
                         <TableCell>
-                            <Link href={`./dashboard/jobs/${job.id}/applications`} prefetch={false}>
+                            <Link href={`./dashboard/jobs/${job._id}/applications`} prefetch={false}>
                                 <div className="font-medium">{job.title}</div>
                                 <div className="hidden text-sm text-muted-foreground md:inline">{job.location}</div>
                             </Link>
@@ -42,7 +42,7 @@ export function RecentJobPostings(props: { jobs: Array<any> | null }) {
                                 <DropdownMenuContent align="end">
                                     <DropdownMenuLabel className="font-bold">Actions</DropdownMenuLabel>
                                     {/* create job url based on job id */}
-                                    <CopyJobUrlStatic jobId={job.id} />
+                                    <CopyJobUrlStatic jobId={job._id} />
 
                                     {/* delete job with server action */}
                                     <DropdownMenuItem>Delete</DropdownMenuItem>

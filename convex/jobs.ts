@@ -2,6 +2,7 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { paginationOptsValidator } from "convex/server";
+import { Id } from "./_generated/dataModel";
 
 export const createNewJob = mutation({
   args: {
@@ -10,7 +11,7 @@ export const createNewJob = mutation({
     salary: v.number(),
     qualifications: v.string(),
     description: v.string(),
-    expires_at: v.string(),
+    expires_at: v.number() /* ISO timestamp */,
     employment_type: v.string(),
     experience: v.string(),
     email_subject: v.string(),
@@ -56,5 +57,23 @@ export const allJobsWithPagination = query({
       .filter((query) => query.eq(query.field("is_deleted"), false))
       .order("desc") /* By default Convex always returns documents ordered by _creationTime */
       .paginate(args.paginationOps);
+  },
+});
+
+export const jobUnauthenticatedView = query({
+  args: { jobId: v.string() },
+  handler: async (ctx, args) => {
+    const job = await ctx.db.get(args.jobId as Id<"jobs">);
+    if (!job || job.expires_at < Date.now() || !job.is_published || job.is_deleted) throw new Error("job not found");
+
+    /* fetch company details */
+    const author = await ctx.db.get(job.authorId);
+    if (!author) return { job, meta: {} };
+
+    const author_metadata = await ctx.db
+      .query("metadata")
+      .withIndex("by_userId", (query) => query.eq("userId", author._id))
+      .unique();
+    return { job, meta: { company: author_metadata?.company } };
   },
 });
