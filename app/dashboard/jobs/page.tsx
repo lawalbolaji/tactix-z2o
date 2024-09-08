@@ -91,7 +91,7 @@ export default async function Jobs({ searchParams }: { searchParams: { offset: n
                   </Badge>
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
-                  {format(parseISO(job.expires_at), APP_TIME_FORMAT)}
+                  {format(new Date(job.expires_at), APP_TIME_FORMAT)}
                 </TableCell>
                 <TableCell className="text-right flex justify-center items-center">
                   <div className="flex items-center gap-2">
