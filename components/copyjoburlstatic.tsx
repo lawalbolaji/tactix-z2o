@@ -7,7 +7,7 @@ export function CopyJobUrlStatic(props: { jobId: number }) {
         <DropdownMenuItem
             onClick={() => {
                 const rootUrl = new URL(window.location.href).hostname;
-                const link = `${rootUrl}/v2/jobs/${props.jobId}/view`;
+                const link = `${rootUrl}/jobs/${props.jobId}/view`;
                 window.navigator.clipboard.writeText(link);
             }}
         >
