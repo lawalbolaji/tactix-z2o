@@ -4,14 +4,15 @@ import { Button } from "@/components/ui/button";
 // prettier-ignore
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useAuthActions } from "@convex-dev/auth/react";
+import { useQuery } from "convex/react";
 import { LogOut } from "lucide-react";
-import Link from "next/link";
+import { api } from "../../convex/_generated/api";
 
 /* profileImageUri, username, email,  */
-export function UserNav(props: { username: string | undefined }) {
-  const firstNameInitial =
-    props.username?.split(" ")[0]?.[0] ?? "R"; /* default user is rasheed to accommodate some of the old staging data */
-  const lastNameInitial = props.username?.split(" ")[1]?.[0] ?? "L";
+export function UserNav() {
+  const user = useQuery(api.users.viewer);
+  const firstNameInitial = user?.name?.split(" ")[0]?.[0];
+  const lastNameInitial = user?.name?.split(" ")[1]?.[0];
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -19,7 +20,7 @@ export function UserNav(props: { username: string | undefined }) {
           <Avatar className="h-8 w-8">
             <AvatarImage
               src={`https://placehold.co/32x32/CAB26D/white?text=${firstNameInitial}${lastNameInitial}`}
-              alt={"Rasheed"}
+              alt={`${user?.name}`}
             />
             <AvatarFallback>{""}</AvatarFallback>
           </Avatar>
