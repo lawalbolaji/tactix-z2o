@@ -35,6 +35,9 @@ export const application = query({
     if (!job) throw new Error("job not found");
 
     const application = await ctx.db.get(args.applicationId as Id<"applications">);
+    if (!application) throw new Error("application not found");
+
+    application.resume_uri = (await ctx.storage.getUrl(application?.resume_uri as Id<"_storage">))!;
     return { application, job: { title: job.title } };
   },
 });
@@ -61,5 +64,37 @@ export const updateApplicationStatus = mutation({
     if (!authorId) throw new Error("user not signed in");
 
     await ctx.db.patch(args.applicationId as Id<"applications">, { status: args.status });
+  },
+});
+
+export const generateUploadUrl = mutation({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.storage.generateUploadUrl();
+  },
+});
+
+export const createJobApplication = mutation({
+  args: {
+    jobId: v.id("jobs"),
+    name: v.string(),
+    email: v.string(),
+    phone: v.optional(v.string()),
+    resume_uri: v.string(),
+    cover_letter: v.string(),
+    additional_info: v.string(),
+    linkedin: v.string(),
+    portfolio: v.string(),
+    salary: v.optional(v.number()),
+    location: v.string(),
+    years_of_experience: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.insert("applications", {
+      ...args,
+      status: "submitted",
+      score: 85,
+      rational: "great application overall",
+    });
   },
 });

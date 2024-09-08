@@ -2,6 +2,9 @@ import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
 import { SubmitButton } from "@/components/apply/submitbtn";
 import { FileUploader } from "@/components/apply/fileuploader";
+import { fetchMutation } from "convex/nextjs";
+import { api } from "../../../../convex/_generated/api";
+import { Id } from "../../../../convex/_generated/dataModel";
 
 export default function ApplyForJob({ params }: { params: { id: string } }) {
   const { success, data: jobId, error: urlValidationError } = z.string().safeParse(params.id);
@@ -45,16 +48,8 @@ export default function ApplyForJob({ params }: { params: { id: string } }) {
     }
 
     /* image must have been uploaded otherwise we won't get the resume_uri and the form won't submit */
-
-    const supabase = {} as any;
-    const { error: dbError } = await supabase.from("applications").insert([{ ...application, job_id: jobId }]);
-
-    if (dbError) {
-      console.log(dbError);
-      return { error: { message: "unable to create application" } };
-    }
-
-    redirect(`/v2/jobs/${jobId}/success`);
+    await fetchMutation(api.applications.createJobApplication, { ...application, jobId: jobId as Id<"jobs"> });
+    redirect(`/jobs/${jobId}/success`);
   }
 
   return (
