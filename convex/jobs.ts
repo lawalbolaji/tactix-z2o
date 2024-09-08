@@ -77,3 +77,23 @@ export const jobUnauthenticatedView = query({
     return { job, meta: { company: author_metadata?.company } };
   },
 });
+
+export const deleteJob = mutation({
+  args: { jobId: v.id("jobs") },
+  handler: async (ctx, args) => {
+    const authorId = await getAuthUserId(ctx);
+    if (!authorId) throw new Error("user not signed in");
+
+    await ctx.db.patch(args.jobId as Id<"jobs">, { is_deleted: true });
+  },
+});
+
+export const publishJob = mutation({
+  args: { jobId: v.id("jobs") },
+  handler: async (ctx, args) => {
+    const authorId = await getAuthUserId(ctx);
+    if (!authorId) throw new Error("user not signed in");
+
+    await ctx.db.patch(args.jobId as Id<"jobs">, { is_published: true });
+  },
+});

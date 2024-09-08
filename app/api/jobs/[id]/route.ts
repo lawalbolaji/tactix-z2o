@@ -1,26 +1,23 @@
+import { fetchMutation } from "convex/nextjs";
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
+import { api } from "../../../../convex/_generated/api";
+import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
+import { Id } from "../../../../convex/_generated/dataModel";
 
 /* only supports delete and publish */
 export async function POST(request: Request, { params }: { params: { id: string } }) {
-  const { op } = await request.json();
-  // const supabase = createClient();
-  const supabase = {} as any;
-
-  if (op === "SOFT_DELETE") {
-    const { error } = await supabase.from("jobs").update({ is_deleted: true }).eq("id", params.id).select();
-    if (error) {
-      console.log(error);
-      return NextResponse.json({ message: "unable to update record" }, { status: 500 });
+  try {
+    const { op } = await request.json();
+    if (op === "SOFT_DELETE") {
+      await fetchMutation(api.jobs.deleteJob, { jobId: params.id as Id<"jobs"> }, { token: convexAuthNextjsToken() });
+    } else if (op === "PUBLISH") {
+      await fetchMutation(api.jobs.publishJob, { jobId: params.id as Id<"jobs"> }, { token: convexAuthNextjsToken() });
     }
-  } else if (op === "PUBLISH") {
-    const { error } = await supabase.from("jobs").update({ is_published: true }).eq("id", params.id);
-    if (error) {
-      console.log(error);
-      return NextResponse.json({ message: "unable to update record" }, { status: 500 });
-    }
+  } catch (error) {
+    return NextResponse.json({ message: "unable to update record" }, { status: 500 });
   }
 
-  revalidatePath("/v2/dashboard/jobs", "layout");
+  revalidatePath("/dashboard/jobs", "layout");
   return NextResponse.json({ message: "ok" });
 }
