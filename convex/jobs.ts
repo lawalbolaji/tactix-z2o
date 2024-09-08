@@ -97,3 +97,20 @@ export const publishJob = mutation({
     await ctx.db.patch(args.jobId as Id<"jobs">, { is_published: true });
   },
 });
+
+export const jobStats = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("user not signed in");
+
+    const jobs = await ctx.db
+      .query("jobs")
+      .withIndex("by_authorId", (query) => query.eq("authorId", userId as Id<"users">))
+      .filter((query) => query.field("is_open"))
+      .collect();
+
+    return { totalOpenPositions: jobs.length, totalJobsCreatedThisMonth: 0 };
+    /* TODO: jobs created by month [janVal, febVal, ...] */
+  },
+});

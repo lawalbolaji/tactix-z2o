@@ -98,3 +98,33 @@ export const createJobApplication = mutation({
     });
   },
 });
+
+export const applicationStats = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("user not signed in");
+
+    const jobIds = (
+      await ctx.db
+        .query("jobs")
+        .withIndex("by_authorId", (query) => query.eq("authorId", userId as Id<"users">))
+        .collect()
+    ).map((job) => job._id);
+
+    const applications = await ctx.db
+      .query("applications")
+      .filter((query) => jobIds.some((id) => query.eq(query.field("jobId"), id)))
+      .collect();
+
+    return {
+      totalApplicants: applications.length,
+      incrInTotalApplicantsFromLastMonth: 0,
+      totalInterviews: applications.reduce((count, application) => {
+        if (application.status === "approve") return count + 1;
+        return count;
+      }, 0),
+      incrInTotalInterviewsFromLastMonth: 0,
+    };
+  },
+});
