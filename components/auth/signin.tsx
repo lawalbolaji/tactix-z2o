@@ -76,7 +76,7 @@ function SignInWithLinkedin() {
       className="flex-1"
       variant="outline"
       type="button"
-      onClick={() => void signIn("github", { redirectTo: "/onboarding" })}
+      onClick={() => void signIn("linkedin", { redirectTo: "/onboarding" })}
     >
       <Linkedin className="mr-2 h-5 w-5" /> Linkedin
     </Button>
