@@ -4,6 +4,7 @@ import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
 import { fetchMutation } from "convex/nextjs";
 import { revalidatePath } from "next/cache";
 import { api } from "../../../../../../convex/_generated/api";
+import { AUTH_SUCCESS_REDIRECT_URI } from "../../../../../../lib/constants";
 
 export async function UpdateApplicationStatus(
   update: { type: "reject" | "approve"; applicationId: string },
@@ -15,5 +16,5 @@ export async function UpdateApplicationStatus(
     { status: update.type, applicationId: update.applicationId },
     { token },
   );
-  revalidatePath("/dashboard", "layout");
+  revalidatePath(AUTH_SUCCESS_REDIRECT_URI, "layout");
 }

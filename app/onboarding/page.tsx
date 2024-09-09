@@ -3,11 +3,12 @@ import { redirect } from "next/navigation";
 import { CreateAccount } from "../../components/auth/createaccount";
 import { fetchQuery } from "convex/nextjs";
 import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
+import { AUTH_SUCCESS_REDIRECT_URI } from "../../lib/constants";
 
 export default async function Onboarding() {
   const metadata = await fetchQuery(api.users.getLoggedInUserMetadata, {}, { token: convexAuthNextjsToken() });
   if (!!metadata) {
-    redirect("/dashboard");
+    redirect(AUTH_SUCCESS_REDIRECT_URI);
   }
 
   return (

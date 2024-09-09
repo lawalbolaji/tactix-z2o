@@ -22,3 +22,6 @@ We are pleased to inform you that you have been selected for the role of {{job.r
 Regards,
 hr@{{user.company}}
 `;
+
+
+export const AUTH_SUCCESS_REDIRECT_URI = "/dashboard";

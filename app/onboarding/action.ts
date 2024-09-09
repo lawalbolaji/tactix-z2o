@@ -6,6 +6,7 @@ import { z } from "zod";
 import { api } from "../../convex/_generated/api";
 import { fetchMutation } from "convex/nextjs";
 import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
+import { AUTH_SUCCESS_REDIRECT_URI } from "../../lib/constants";
 
 export async function signUp(prevState: any, formData: FormData) {
   const authSchema = z.object({
@@ -37,6 +38,6 @@ export async function signUp(prevState: any, formData: FormData) {
     { token },
   );
 
-  revalidatePath("/dashboard", "layout");
-  redirect("/dashboard?newUser=true");
+  revalidatePath(AUTH_SUCCESS_REDIRECT_URI, "layout");
+  redirect(`${AUTH_SUCCESS_REDIRECT_URI}?newUser=true`);
 }

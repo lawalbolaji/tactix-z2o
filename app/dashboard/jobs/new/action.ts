@@ -9,6 +9,7 @@ import { employmentTypes, experienceLevels } from "@/components/jobs/data";
 import { fetchMutation } from "convex/nextjs";
 import { api } from "../../../../convex/_generated/api";
 import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
+import { AUTH_SUCCESS_REDIRECT_URI } from "../../../../lib/constants";
 
 export async function createNewJobPosting(formData: FormData) {
   const payload = {
@@ -53,6 +54,6 @@ export async function createNewJobPosting(formData: FormData) {
   );
   console.log("successfully saved job to DB");
 
-  revalidatePath("/dashboard", "layout");
-  redirect("/dashboard");
+  revalidatePath(AUTH_SUCCESS_REDIRECT_URI, "layout");
+  redirect(AUTH_SUCCESS_REDIRECT_URI);
 }
