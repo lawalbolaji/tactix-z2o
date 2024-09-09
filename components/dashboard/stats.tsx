@@ -1,7 +1,9 @@
 import { Activity, Building, CreditCard, Users } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
 
-export function TotalApplicants(props: { appStats?: { totalApplicants: number } }) {
+export function TotalApplicants(props: {
+  appStats?: { totalApplicants: number; incrInTotalApplicantsFromLastMonth: number };
+}) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -12,7 +14,10 @@ export function TotalApplicants(props: { appStats?: { totalApplicants: number } 
         {!!props.appStats ? (
           <>
             <div className="text-2xl font-bold">{props.appStats?.totalApplicants}</div>
-            <p className="text-xs text-muted-foreground">+20.1% from last month</p>
+            <p className="text-xs text-muted-foreground">
+              {`${props.appStats?.incrInTotalApplicantsFromLastMonth > 0 ? "+" : ""}${props.appStats?.incrInTotalApplicantsFromLastMonth}`}
+              % from last month
+            </p>
           </>
         ) : (
           <Spinner />
@@ -22,7 +27,9 @@ export function TotalApplicants(props: { appStats?: { totalApplicants: number } 
   );
 }
 
-export function SuccessRate(props: { appStats?: { totalApplicants: number; totalInterviews: number } }) {
+export function SuccessRate(props: {
+  appStats?: { totalApplicants: number; totalInterviews: number; incrInSuccessRateFromLastMonth: number };
+}) {
   const { appStats } = props;
   const successRate = !!appStats
     ? appStats.totalApplicants === 0
@@ -40,7 +47,10 @@ export function SuccessRate(props: { appStats?: { totalApplicants: number; total
         {!!props.appStats ? (
           <>
             <div className="text-2xl font-bold">{successRate}%</div>
-            <p className="text-xs text-muted-foreground">+10.1% from last month</p>
+            <p className="text-xs text-muted-foreground">
+              {`${props.appStats?.incrInSuccessRateFromLastMonth > 0 ? "+" : ""}${props.appStats?.incrInSuccessRateFromLastMonth}`}
+              % from last month
+            </p>
           </>
         ) : (
           <Spinner />
@@ -50,7 +60,9 @@ export function SuccessRate(props: { appStats?: { totalApplicants: number; total
   );
 }
 
-export function Interviews(props: { appStats?: { totalInterviews: number } }) {
+export function Interviews(props: {
+  appStats?: { totalInterviews: number; incrInTotalInterviewsFromLastMonth: number };
+}) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -61,7 +73,10 @@ export function Interviews(props: { appStats?: { totalInterviews: number } }) {
         {!!props.appStats ? (
           <>
             <div className="text-2xl font-bold">{props.appStats?.totalInterviews}</div>
-            <p className="text-xs text-muted-foreground">+19% from last month</p>
+            <p className="text-xs text-muted-foreground">
+              {`${props.appStats?.incrInTotalInterviewsFromLastMonth > 0 ? "+" : ""}${props.appStats?.incrInTotalInterviewsFromLastMonth}`}
+              % from last month
+            </p>
           </>
         ) : (
           <Spinner />
@@ -71,7 +86,7 @@ export function Interviews(props: { appStats?: { totalInterviews: number } }) {
   );
 }
 
-export function OpenPositions(props: { jobStats?: { totalOpenPositions: number } }) {
+export function OpenPositions(props: { jobStats?: { totalOpenPositions: number; incrInOpenJobsThisMonth: number } }) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -82,7 +97,10 @@ export function OpenPositions(props: { jobStats?: { totalOpenPositions: number }
         {!!props.jobStats ? (
           <>
             <div className="text-2xl font-bold">{props.jobStats?.totalOpenPositions}</div>
-            <p className="text-xs text-muted-foreground">+5 since last hour</p>
+            <p className="text-xs text-muted-foreground">
+              {`${props.jobStats?.incrInOpenJobsThisMonth > 0 ? "+" : ""}${props.jobStats?.incrInOpenJobsThisMonth}`}%
+              from last month
+            </p>
           </>
         ) : (
           <Spinner />

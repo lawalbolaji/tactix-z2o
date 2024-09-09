@@ -110,7 +110,39 @@ export const jobStats = query({
       .filter((query) => query.field("is_open"))
       .collect();
 
-    return { totalOpenPositions: jobs.length, totalJobsCreatedThisMonth: 0 };
+    const now = new Date();
+    const firstDayOfPrevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const firstDayOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const lastDayOfPrevMonth = new Date();
+    lastDayOfPrevMonth.setFullYear(now.getFullYear(), now.getMonth(), 0);
+
+    const openJobsLastMonth = jobs.reduce((count, job) => {
+      if (
+        job._creationTime >= firstDayOfPrevMonth.getTime() &&
+        job._creationTime <= lastDayOfPrevMonth.getTime() &&
+        job.is_open
+      )
+        return count + 1;
+      return count;
+    }, 0);
+
+    const openJobsThisMonth = jobs.reduce((count, job) => {
+      if (job._creationTime >= firstDayOfCurrentMonth.getTime() && job.is_open) return count + 1;
+      return count;
+    }, 0);
+
+    const totalJobsCreatedThisMonth = jobs.reduce((count, job) => {
+      if (job._creationTime >= firstDayOfCurrentMonth.getTime()) return count + 1;
+      return count;
+    }, 0);
+
+    return {
+      totalOpenPositions: jobs.length,
+      totalJobsCreatedThisMonth,
+      incrInOpenJobsThisMonth: Math.floor(
+        ((openJobsThisMonth - openJobsLastMonth) / (openJobsThisMonth + openJobsLastMonth)) * 100,
+      ),
+    };
     /* TODO: jobs created by month [janVal, febVal, ...] */
   },
 });

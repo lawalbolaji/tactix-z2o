@@ -105,26 +105,95 @@ export const applicationStats = query({
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("user not signed in");
 
-    const jobIds = (
-      await ctx.db
-        .query("jobs")
-        .withIndex("by_authorId", (query) => query.eq("authorId", userId as Id<"users">))
-        .collect()
-    ).map((job) => job._id);
-
+    const jobs = await ctx.db
+      .query("jobs")
+      .withIndex("by_authorId", (query) => query.eq("authorId", userId as Id<"users">))
+      .collect();
+    const jobIds = jobs.map((job) => job._id);
     const applications = await ctx.db
       .query("applications")
       .filter((query) => jobIds.some((id) => query.eq(query.field("jobId"), id)))
       .collect();
 
+    const now = new Date();
+    const firstDayOfPrevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const firstDayOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const lastDayOfPrevMonth = new Date();
+    /* If you provide 0 as the dayValue in Date.setFullYear you get the last day of the previous month, see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/setFullYear */
+    lastDayOfPrevMonth.setFullYear(now.getFullYear(), now.getMonth(), 0);
+
+    const totalInterviewsInPrevMonth = applications.reduce((count, application) => {
+      if (
+        application._creationTime >= firstDayOfPrevMonth.getTime() &&
+        application._creationTime <= lastDayOfPrevMonth.getTime() &&
+        application.status === "approve"
+      )
+        return count + 1;
+      return count;
+    }, 0);
+
+    const totalInterviewsUpToPrevMonth = applications.reduce((count, application) => {
+      if (application._creationTime <= lastDayOfPrevMonth.getTime() && application.status === "approve")
+        return count + 1;
+      return count;
+    }, 0);
+
+    const totalInterviewsToday = applications.reduce((count, application) => {
+      if (application.status === "approve") return count + 1;
+      return count;
+    }, 0);
+
+    const totalApplicationsInPrevMonth = applications.reduce((count, application) => {
+      if (
+        application._creationTime >= firstDayOfPrevMonth.getTime() &&
+        application._creationTime <= lastDayOfPrevMonth.getTime()
+      )
+        return count + 1;
+      return count;
+    }, 0);
+
+    const totalApplicationsUpToPrevMonth = applications.reduce((count, application) => {
+      if (application._creationTime <= lastDayOfPrevMonth.getTime()) return count + 1;
+      return count;
+    }, 0);
+
+    const totalApplications = applications.length;
+
+    const totalInterviewsThisMonth = applications.reduce((count, application) => {
+      if (application._creationTime >= firstDayOfCurrentMonth.getTime() && application.status === "approve")
+        return count + 1;
+      return count;
+    }, 0);
+
+    const totalApplicationsThisMonth = applications.reduce((count, application) => {
+      if (application._creationTime >= firstDayOfCurrentMonth.getTime()) return count + 1;
+      return count;
+    }, 0);
+
+    const successRateFromPreviousMonth =
+      totalApplicationsUpToPrevMonth > 0 ? totalInterviewsUpToPrevMonth / totalApplicationsUpToPrevMonth : 0;
+    const currentSuccessRate = totalInterviewsToday / totalApplications;
+
     return {
-      totalApplicants: applications.length,
-      incrInTotalApplicantsFromLastMonth: 0,
+      totalApplicants: totalApplications,
+      incrInTotalApplicantsFromLastMonth: Math.floor(
+        ((totalApplicationsThisMonth - totalApplicationsInPrevMonth) /
+          (totalApplicationsThisMonth - totalApplicationsInPrevMonth)) *
+          100,
+      ),
       totalInterviews: applications.reduce((count, application) => {
         if (application.status === "approve") return count + 1;
         return count;
       }, 0),
-      incrInTotalInterviewsFromLastMonth: 0,
+      incrInTotalInterviewsFromLastMonth: Math.floor(
+        ((totalInterviewsThisMonth - totalInterviewsInPrevMonth) /
+          (totalInterviewsThisMonth + totalInterviewsInPrevMonth)) *
+          100,
+      ),
+      incrInSuccessRateFromLastMonth: Math.floor(
+        ((currentSuccessRate - successRateFromPreviousMonth) / (currentSuccessRate + successRateFromPreviousMonth)) *
+          100,
+      ),
     };
   },
 });
