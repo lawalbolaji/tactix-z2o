@@ -3,6 +3,7 @@ import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { Id } from "./_generated/dataModel";
 import { paginationOptsValidator } from "convex/server";
+import { assignScore } from "./util/score";
 
 export const topApplications = query({
   args: { jobId: v.string() },
@@ -93,7 +94,7 @@ export const createJobApplication = mutation({
     await ctx.db.insert("applications", {
       ...args,
       status: "submitted",
-      score: 85,
+      score: assignScore(),
       rational: "great application overall",
     });
   },

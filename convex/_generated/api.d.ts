@@ -19,6 +19,7 @@ import type * as http from "../http.js";
 import type * as jobs from "../jobs.js";
 import type * as messages from "../messages.js";
 import type * as users from "../users.js";
+import type * as util_score from "../util/score.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -35,6 +36,7 @@ declare const fullApi: ApiFromModules<{
   jobs: typeof jobs;
   messages: typeof messages;
   users: typeof users;
+  "util/score": typeof util_score;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,
