@@ -35,9 +35,11 @@ export const mostRecentJobs = query({
     const jobs = await ctx.db
       .query("jobs")
       .withIndex("by_authorId", (query) => query.eq("authorId", authorId)) /*  */
-      .filter((query) => query.eq(query.field("is_deleted"), false))
+      .filter((query) =>
+        query.and(query.eq(query.field("is_deleted"), false), query.gt(query.field("expires_at"), Date.now())),
+      )
       .order("desc") /* By default Convex always returns documents ordered by _creationTime */
-      .collect();
+      .take(4);
 
     return jobs;
   },
@@ -64,6 +66,7 @@ export const jobUnauthenticatedView = query({
   args: { jobId: v.string() },
   handler: async (ctx, args) => {
     const job = await ctx.db.get(args.jobId as Id<"jobs">);
+    /* TODO: handle expired jobs separately */
     if (!job || job.expires_at < Date.now() || !job.is_published || job.is_deleted) throw new Error("job not found");
 
     /* fetch company details */
