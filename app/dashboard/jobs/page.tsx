@@ -13,7 +13,6 @@ import { fetchQuery } from "convex/nextjs";
 import { api } from "../../../convex/_generated/api";
 import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
 
-// const REMOTE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSxxxxx";
 const APP_TIME_FORMAT = "yyyy-MM-dd";
 const PAGE_SIZE = 7;
 
@@ -21,7 +20,7 @@ export default async function Jobs({ searchParams }: { searchParams: { offset: n
   /* TODO: convex does not support offset based pagination, so will need to implement full client side pagination */
   let offset = +(searchParams.offset || 0);
   const currentPage = offset / PAGE_SIZE;
-  const paginationOps = { numItems: 10, cursor: null };
+  const paginationOps = { numItems: 7, cursor: null };
   const token = convexAuthNextjsToken();
   const { page: jobs } = await fetchQuery(api.jobs.allJobsWithPagination, { paginationOps }, { token });
   const totalRecords = 0;

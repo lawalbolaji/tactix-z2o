@@ -39,7 +39,7 @@ export default async function AllApplications({
   let offset = +(searchParams.offset || 0);
   const currentPage = offset / PAGE_SIZE;
 
-  const paginationOps = { numItems: 10, cursor: null };
+  const paginationOps = { numItems: 7, cursor: null };
   const token = convexAuthNextjsToken();
   const { page: applications } = await fetchQuery(
     api.applications.allApplicationsWithPagination,
