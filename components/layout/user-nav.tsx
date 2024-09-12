@@ -7,6 +7,7 @@ import { useAuthActions } from "@convex-dev/auth/react";
 import { useQuery } from "convex/react";
 import { LogOut } from "lucide-react";
 import { api } from "../../convex/_generated/api";
+import Link from "next/link";
 
 /* profileImageUri, username, email,  */
 export function UserNav() {
@@ -36,11 +37,11 @@ export function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem>
-            Dashboard
+            <Link href={"/dashboard"}>Dashboard</Link>
             <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            Jobs
+            <Link href={"/dashboard/jobs"}>Jobs</Link>
             <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuGroup>
