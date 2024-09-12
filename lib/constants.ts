@@ -25,3 +25,7 @@ hr@{{user.company}}
 
 
 export const AUTH_SUCCESS_REDIRECT_URI = "/dashboard";
+export const AUTH_FAIL_REDIRECT_URI = "/";
+
+export const AuthErrorCode = 403;
+export const DataNotFoundErrorCode = 404;

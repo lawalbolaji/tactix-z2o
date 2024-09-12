@@ -1,20 +1,21 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { Id } from "./_generated/dataModel";
 import { paginationOptsValidator } from "convex/server";
 import { assignScore } from "./util/score";
 import { calculateValuableExperience } from "./util/experience";
+import { AuthErrorCode, DataNotFoundErrorCode } from "./util/constants";
 
 export const topApplications = query({
   args: { jobId: v.string() },
   handler: async (ctx, args) => {
     const authorId = await getAuthUserId(ctx);
-    if (!authorId) throw new Error("user not signed in");
+    if (!authorId) throw new ConvexError({ message: "user not signed in", code: AuthErrorCode, severity: "high" });
 
     // get job details
     const job = await ctx.db.get(args.jobId as Id<"jobs">);
-    if (!job) throw new Error("job not found");
+    if (!job) return { applications: [], job: { title: "" } };
 
     const applications = await ctx.db
       .query("applications")
@@ -30,14 +31,15 @@ export const application = query({
   args: { jobId: v.string(), applicationId: v.string() },
   handler: async (ctx, args) => {
     const authorId = await getAuthUserId(ctx);
-    if (!authorId) throw new Error("user not signed in");
+    if (!authorId) throw new ConvexError({ message: "user not signed in", code: AuthErrorCode, severity: "high" });
 
     // get job details
     const job = await ctx.db.get(args.jobId as Id<"jobs">);
-    if (!job) throw new Error("job not found");
+    if (!job) throw new ConvexError({ message: "job not found", code: DataNotFoundErrorCode, severity: "low" });
 
     const application = await ctx.db.get(args.applicationId as Id<"applications">);
-    if (!application) throw new Error("application not found");
+    if (!application)
+      throw new ConvexError({ message: "application not found", code: DataNotFoundErrorCode, severity: "low" });
 
     application.resume_uri = (await ctx.storage.getUrl(application?.resume_uri as Id<"_storage">))!;
     return { application, job: { title: job.title } };
@@ -49,7 +51,7 @@ export const allApplicationsWithPagination = query({
   handler: async (ctx, args) => {
     /* need to implement manual client side pagination */
     const authorId = await getAuthUserId(ctx);
-    if (!authorId) throw new Error("user not signed in");
+    if (!authorId) throw new ConvexError({ message: "user not signed in", code: AuthErrorCode, severity: "high" });
 
     return await ctx.db
       .query("applications")
@@ -63,7 +65,7 @@ export const updateApplicationStatus = mutation({
   args: { applicationId: v.string(), status: v.string() },
   handler: async (ctx, args) => {
     const authorId = await getAuthUserId(ctx);
-    if (!authorId) throw new Error("user not signed in");
+    if (!authorId) throw new ConvexError({ message: "user not signed in", code: AuthErrorCode, severity: "high" });
 
     await ctx.db.patch(args.applicationId as Id<"applications">, { status: args.status });
   },
@@ -96,7 +98,7 @@ export const createJobApplication = mutation({
       status: "submitted",
       score: assignScore(),
       rational: "great application overall",
-      years_of_experience: calculateValuableExperience()
+      years_of_experience: calculateValuableExperience(),
     });
   },
 });
@@ -105,7 +107,7 @@ export const applicationStats = query({
   args: {},
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("user not signed in");
+    if (!userId) throw new ConvexError({ message: "user not signed in", code: AuthErrorCode, severity: "high" });
 
     const jobs = await ctx.db
       .query("jobs")

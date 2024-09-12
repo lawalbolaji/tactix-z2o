@@ -19,6 +19,7 @@ import type * as http from "../http.js";
 import type * as jobs from "../jobs.js";
 import type * as messages from "../messages.js";
 import type * as users from "../users.js";
+import type * as util_constants from "../util/constants.js";
 import type * as util_experience from "../util/experience.js";
 import type * as util_score from "../util/score.js";
 
@@ -37,6 +38,7 @@ declare const fullApi: ApiFromModules<{
   jobs: typeof jobs;
   messages: typeof messages;
   users: typeof users;
+  "util/constants": typeof util_constants;
   "util/experience": typeof util_experience;
   "util/score": typeof util_score;
 }>;

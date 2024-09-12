@@ -1,8 +1,9 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { paginationOptsValidator } from "convex/server";
 import { Id } from "./_generated/dataModel";
+import { AuthErrorCode, DataNotFoundErrorCode } from "./util/constants";
 
 export const createNewJob = mutation({
   args: {
@@ -20,7 +21,7 @@ export const createNewJob = mutation({
   },
   handler: async (ctx, args) => {
     const authorId = await getAuthUserId(ctx);
-    if (!authorId) throw new Error("user not signed in");
+    if (!authorId) throw new ConvexError({ message: "user not signed in", code: AuthErrorCode, severity: "high" });
 
     await ctx.db.insert("jobs", { ...args, authorId, is_deleted: false, is_open: true });
   },
@@ -30,7 +31,7 @@ export const mostRecentJobs = query({
   args: {},
   handler: async (ctx, args) => {
     const authorId = await getAuthUserId(ctx);
-    if (!authorId) throw new Error("user not signed in");
+    if (!authorId) throw new ConvexError({ message: "user not signed in", code: AuthErrorCode, severity: "high" });
 
     const jobs = await ctx.db
       .query("jobs")
@@ -51,7 +52,7 @@ export const allJobsWithPagination = query({
   handler: async (ctx, args) => {
     /* need to implement manual client side pagination */
     const authorId = await getAuthUserId(ctx);
-    if (!authorId) throw new Error("user not signed in");
+    if (!authorId) throw new ConvexError({ message: "user not signed in", code: AuthErrorCode, severity: "high" });
 
     return await ctx.db
       .query("jobs")
@@ -67,11 +68,16 @@ export const jobUnauthenticatedView = query({
   handler: async (ctx, args) => {
     const job = await ctx.db.get(args.jobId as Id<"jobs">);
     /* TODO: handle expired jobs separately */
-    if (!job || job.expires_at < Date.now() || !job.is_published || job.is_deleted) throw new Error("job not found");
+    if (!job || job.expires_at < Date.now() || !job.is_published || job.is_deleted)
+      throw new ConvexError({ message: "job not found", code: DataNotFoundErrorCode, severity: "low" });
 
     /* fetch company details */
     const author = await ctx.db.get(job.authorId);
-    if (!author) return { job, meta: {} };
+    if (!author) {
+      console.warn("data integrity is compromised!");
+      console.warn(`found job record with id: ${job._id} without corresponding author`);
+      return { job, meta: {} };
+    }
 
     const author_metadata = await ctx.db
       .query("metadata")
@@ -85,7 +91,7 @@ export const deleteJob = mutation({
   args: { jobId: v.id("jobs") },
   handler: async (ctx, args) => {
     const authorId = await getAuthUserId(ctx);
-    if (!authorId) throw new Error("user not signed in");
+    if (!authorId) throw new ConvexError({ message: "user not signed in", code: AuthErrorCode, severity: "high" });
 
     await ctx.db.patch(args.jobId as Id<"jobs">, { is_deleted: true });
   },
@@ -95,7 +101,7 @@ export const publishJob = mutation({
   args: { jobId: v.id("jobs") },
   handler: async (ctx, args) => {
     const authorId = await getAuthUserId(ctx);
-    if (!authorId) throw new Error("user not signed in");
+    if (!authorId) throw new ConvexError({ message: "user not signed in", code: AuthErrorCode, severity: "high" });
 
     await ctx.db.patch(args.jobId as Id<"jobs">, { is_published: true });
   },
@@ -105,7 +111,7 @@ export const jobStats = query({
   args: {},
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("user not signed in");
+    if (!userId) throw new ConvexError({ message: "user not signed in", code: AuthErrorCode, severity: "high" });
 
     const jobs = await ctx.db
       .query("jobs")
