@@ -9,7 +9,7 @@ export default function ErrorPage({ error, reset }: { error: Error & { digest?: 
     console.error(error);
   }, [error]);
 
-  if ("not signed in".includes(error.message.toLowerCase())) return redirect(AUTH_FAIL_REDIRECT_URI);
+  if ((error as Error).message.toLowerCase().includes("not signed in")) return redirect(AUTH_FAIL_REDIRECT_URI);
 
   return (
     <div>
