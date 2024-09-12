@@ -39,11 +39,8 @@ export function PublishJobButton(props: { jobId: string; is_published: boolean }
                                     return false;
                                 }
 
-                                const responseAsJson = await response.json();
+                                await response.json();
                                 setRemoteRequestStatus("error");
-
-                                /* DEBUGGING */
-                                console.log(responseAsJson);
                             } catch (error) {
                                 // fetch request is basically not working - network issues?
                                 console.error(error);
