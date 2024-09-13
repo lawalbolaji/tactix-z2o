@@ -9,7 +9,10 @@ export default function ErrorPage({ error, reset }: { error: Error & { digest?: 
     console.error(error);
   }, [error]);
 
-  if ((error as Error).message.toLowerCase().includes("not signed in")) return redirect(AUTH_FAIL_REDIRECT_URI);
+  const errorMessage = (error as Error).message.toLowerCase();
+  const notLoggedIn = errorMessage.includes("not signed in");
+  const tokenExpired = errorMessage.includes("expired");
+  if (notLoggedIn || tokenExpired) return redirect(AUTH_FAIL_REDIRECT_URI);
 
   return (
     <div>
