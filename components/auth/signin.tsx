@@ -114,7 +114,7 @@ function SubmitButton(props: { pending: boolean }) {
       ) : (
         <></>
       )}
-      Sign in
+      Get magic link
     </Button>
   );
 }
