@@ -1,52 +1,90 @@
-<h1 align="center">Tactix</h1>
+# Welcome to your Convex functions directory!
 
-<p align="center">Tactix is a hiring automation tool that helps you hire the best talent efficiently! With tactix, you can create job ads and get a short list of the top ranked candidates for each application.</p>
+Write your Convex functions here.
+See https://docs.convex.dev/functions for more.
 
-<h3 align="center">
-  <b><a href="https://tactix-z2o.vercel.app">Get Started</a></b>
-</h3>
+A query function that takes two arguments looks like:
 
-![alt text](../docs/tactix.png)
+```ts
+// functions.js
+import { query } from "./_generated/server";
+import { v } from "convex/values";
 
-## Features
+export const myQueryFunction = query({
+  // Validators for arguments.
+  args: {
+    first: v.number(),
+    second: v.string(),
+  },
 
-- Create and manage job ads efficiently
-- Publish jobs and receive applications
-- Get a pre-ranked list of top applicants for each position
+  // Function implementation.
+  handler: async (ctx, args) => {
+    // Read the database as many times as you need here.
+    // See https://docs.convex.dev/database/reading-data.
+    const documents = await ctx.db.query("tablename").collect();
 
-## Running the application
+    // Arguments passed from the client are properties of the args object.
+    console.log(args.first, args.second);
 
-The best way to use the app is to try it out here, but if you want to self host or run locally, here are a couple of ways to do that:
-
-### Local Machine with nodejs
-
-1. Clone the repo:
-
-```sh
-> git clone git@github.com:lawalbolaji/gpt-playground.git
+    // Write arbitrary JavaScript here: filter, aggregate, build derived data,
+    // remove non-public properties, or create new objects.
+    return documents;
+  },
+});
 ```
 
-2. In the project's root directory, run:
+Using this query function in a React component looks like:
 
-```sh
-> cp .env.example .env.local
+```ts
+const data = useQuery(api.functions.myQueryFunction, {
+  first: 10,
+  second: "hello",
+});
 ```
 
-3. Get OpenAI API Key [here](https://platform.openai.com/account/api-keys) and add those credentials to your `.env.local` file
+A mutation function looks like:
 
-4. Install NodeJs dependencies:
+```ts
+// functions.js
+import { mutation } from "./_generated/server";
+import { v } from "convex/values";
 
-```sh
-> npm ci
+export const myMutationFunction = mutation({
+  // Validators for arguments.
+  args: {
+    first: v.string(),
+    second: v.string(),
+  },
+
+  // Function implementation.
+  handler: async (ctx, args) => {
+    // Insert or modify documents in the database here.
+    // Mutations can also read from the database like queries.
+    // See https://docs.convex.dev/database/writing-data.
+    const message = { body: args.first, author: args.second };
+    const id = await ctx.db.insert("messages", message);
+
+    // Optionally, return a value from your mutation.
+    return await ctx.db.get(id);
+  },
+});
 ```
 
-5. Boot up:
+Using this mutation function in a React component looks like:
 
-```sh
-> npm run dev
+```ts
+const mutation = useMutation(api.functions.myMutationFunction);
+function handleButtonPress() {
+  // fire and forget, the most common way to use mutations
+  mutation({ first: "Hello!", second: "me" });
+  // OR
+  // use the result once the mutation has completed
+  mutation({ first: "Hello!", second: "me" }).then((result) =>
+    console.log(result),
+  );
+}
 ```
 
-## Contributing
-
-- Missing something or found a bug? [Report here](https://github.com/lawalbolaji/tactix-z2o/issues).
-- Pull requests are welcome but for major issues, please open an issue [here](https://github.com/lawalbolaji/tactix-z2o/issues) for discussion first.
+Use the Convex CLI to push your functions to a deployment. See everything
+the Convex CLI can do by running `npx convex -h` in your project root
+directory. To learn more, launch the docs with `npx convex docs`.
