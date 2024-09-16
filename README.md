@@ -1,58 +1,52 @@
-# Welcome to your Convex + Next.js + Convex Auth app
+<h1 align="center">Tactix</h1>
 
-This is a [Convex](https://convex.dev/) project created with [`npm create convex`](https://www.npmjs.com/package/create-convex).
+<p align="center">Tactix is a hiring automation tool that helps you hire the best talent efficiently! With tactix, you can create job ads and get a short list of the top ranked candidates for each application.</p>
 
-After the initial setup (<2 minutes) you'll have a working full-stack app using:
+<h3 align="center">
+  <b><a href="https://tactix-z2o.vercel.app">Get Started</a></b>
+</h3>
 
-- Convex as your backend (database, server logic)
-- [Convex Auth](https://labs.convex.dev/auth) for your authentication implementation
-- [React](https://react.dev/) as your frontend (web page interactivity)
-- [Next.js](https://nextjs.org/) for optimized web hosting and page routing
-- [Tailwind](https://tailwindcss.com/) and [shadcn/ui](https://ui.shadcn.com/) for building great looking accessible UI fast
+![alt text](docs/tactix.png)
 
-## Get started
+## Features
 
-If you just cloned this codebase and didn't use `npm create convex`, run:
+- Create and manage job ads efficiently
+- Publish jobs and receive applications
+- Get a pre-ranked list of top applicants for each position
 
+## Running the application
+
+The best way to use the app is to try it out here, but if you want to self host or run locally, here are a couple of ways to do that:
+
+### Local Machine with nodejs
+
+1. Clone the repo:
+
+```sh
+> git clone git@github.com:lawalbolaji/gpt-playground.git
 ```
-npm install
-npm run dev
+
+2. In the project's root directory, run:
+
+```sh
+> cp .env.example .env.local
 ```
 
-If you're reading this README on GitHub and want to use this template, run:
+3. Get OpenAI API Key [here](https://platform.openai.com/account/api-keys) and add those credentials to your `.env.local` file
 
+4. Install NodeJs dependencies:
+
+```sh
+> npm ci
 ```
-npm create convex@latest -- -t nextjs-convexauth-shadcn
+
+5. Boot up:
+
+```sh
+> npm run dev
 ```
 
-## The app
+## Contributing
 
-The app is a basic multi-user chat. Walkthrough of the source code:
-
-- [convex/auth.ts](./convex/auth.ts) configures the available authentication methods
-- [convex/messages.ts](./convex/messages.ts) is the chat backend implementation
-- [middleware.ts](./middleware.ts) determines which pages require sign-in
-- [app/layout.tsx](./app/layout.tsx) is the main app layout
-- [app/(splash)/page.tsx](<./app/(splash)/page.tsx>) is the splash page (doesn't require sign-in)
-- [app/product/layout.tsx](./app/product/layout.tsx) is the "product" layout for the [product page](./app/product/page.tsx) (requires sign-in)
-- [app/signin/page.tsx](./app/signin/page.tsx) is the sign-in page
-- [app/product/Chat/Chat.tsx](./app/product/Chat/Chat.tsx) is the chat frontend
-
-## Configuring other authentication methods
-
-To configure different authentication methods, see [Configuration](https://labs.convex.dev/auth/config) in the Convex Auth docs.
-
-## Learn more
-
-To learn more about developing your project with Convex, check out:
-
-- The [Tour of Convex](https://docs.convex.dev/get-started) for a thorough introduction to Convex principles.
-- The rest of [Convex docs](https://docs.convex.dev/) to learn about all Convex features.
-- [Stack](https://stack.convex.dev/) for in-depth articles on advanced topics.
-
-## Join the community
-
-Join thousands of developers building full-stack apps with Convex:
-
-- Join the [Convex Discord community](https://convex.dev/community) to get help in real-time.
-- Follow [Convex on GitHub](https://github.com/get-convex/), star and contribute to the open-source implementation of Convex.
+- Missing something or found a bug? [Report here](https://github.com/lawalbolaji/tactix-z2o/issues).
+- Pull requests are welcome but for major issues, please open an issue [here](https://github.com/lawalbolaji/tactix-z2o/issues) for discussion first.
