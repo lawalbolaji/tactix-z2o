@@ -37,8 +37,10 @@ The best way to use the app is to try it out here, but if you want to self host 
 4. Install NodeJs dependencies:
 
 ```sh
-> npm ci
+> npm install
 ```
+
+> You can use yarn, pnpm or any of your preferred package managers for nodejs
 
 5. Boot up:
 
